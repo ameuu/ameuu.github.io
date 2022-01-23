@@ -17,6 +17,67 @@
       </tags>
   </entry>
   <entry>
+    <title>php反序列化冷知识复现</title>
+    <url>/2022/01/23/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%86%B7%E7%9F%A5%E8%AF%86%E5%A4%8D%E7%8E%B0/</url>
+    <content><![CDATA[<h2 id="前提概要"><a href="#前提概要" class="headerlink" title="前提概要"></a>前提概要</h2><p><a href="https://zhuanlan.zhihu.com/p/405838002">https://zhuanlan.zhihu.com/p/405838002</a></p>
+<p>之前比赛遇到的题目，根据师傅的回答复现一下</p>
+<h2 id="PHP-Incomplete-Class"><a href="#PHP-Incomplete-Class" class="headerlink" title="__PHP_Incomplete_Class"></a>__PHP_Incomplete_Class</h2><p>当反序列化 <code>__PHP_Incomplete_Class</code>  这个类后，再对其进行序列化时，其属性会消失。</p>
+<p><strong>0x01:</strong></p>
+<p>首先<code>__PHP_Incomplete_Class</code>是当反序列化一个不存在的类时出现的类，而<code>__PHP_Incomplete_Class_Name</code>属性就是反序列化时不存在的类的类名：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// class A&#123;</span></span><br><span class="line"><span class="comment">//     public $test = &#x27;a&#x27;;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">&#x27;O:1:&quot;A&quot;:1:&#123;s:4:&quot;test&quot;;s:1:&quot;a&quot;;&#125;&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$a</span>));</span><br><span class="line">var_dump(serialize(unserialize(<span class="variable">$a</span>)));</span><br><span class="line"></span><br><span class="line"><span class="comment">//object(__PHP_Incomplete_Class)#1 (2) &#123;</span></span><br><span class="line"><span class="comment">//  [&quot;__PHP_Incomplete_Class_Name&quot;]=&gt;   </span></span><br><span class="line"><span class="comment">//  string(1) &quot;A&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;test&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;a&quot;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//string(31) &quot;O:1:&quot;A&quot;:1:&#123;s:4:&quot;test&quot;;s:1:&quot;a&quot;;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>而当再次反序列化的时候，内容并没有发生变化，这就说明了当序列化<code>__PHP_Incomplete_Class</code>时会先去查找属性<code>__PHP_Incomplete_Class_Name</code>的值，然后进行序列化为相对应的类</p>
+<p>而我们可以根据该特点构造相对应的字符串，即构造存在<code>__PHP_Incomplete_Class</code>类但类中却不存在<code>__PHP_Incomplete_Class_Name</code>属性，当该字符串经过反序列化和序列化之后就会丢弃类里面的其他属性：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// class A&#123;</span></span><br><span class="line"><span class="comment">//     public $test = &#x27;a&#x27;;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">&#x27;O:22:&quot;__PHP_Incomplete_Class&quot;:1:&#123;s:4:&quot;test&quot;;s:1:&quot;a&quot;;&#125;&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$a</span>));</span><br><span class="line">var_dump(serialize(unserialize(<span class="variable">$a</span>)));</span><br><span class="line"></span><br><span class="line"><span class="comment">//object(__PHP_Incomplete_Class)#1 (1) &#123;</span></span><br><span class="line"><span class="comment">//  [&quot;test&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;a&quot;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//string(34) &quot;O:22:&quot;__PHP_Incomplete_Class&quot;:0:&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="n-3ctf-Ezunser"><a href="#n-3ctf-Ezunser" class="headerlink" title="n^3ctf_Ezunser"></a>n^3ctf_Ezunser</h3><p><a href="https://buuoj.cn/match/matches/68/challenges">题目</a></p>
+<p>反序列化未定义的类</p>
+<p>直接给了源码：</p>
+<p><code>index.php</code></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myAutoloader</span>(<span class="params"><span class="variable">$classname</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">include</span> <span class="variable">$classname</span>.<span class="string">&quot;.php&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;pop&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$pop</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;pop&#x27;</span>];</span><br><span class="line">    <span class="variable">$o</span> = unserialize(<span class="variable">$pop</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">    spl_autoload_register(<span class="string">&#x27;myAutoloader&#x27;</span>);</span><br><span class="line">    <span class="variable">$raw</span> = serialize(<span class="variable">$o</span>);</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/Evil/&quot;</span>,<span class="variable">$raw</span>))&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;Evil Classes!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$o</span> = unserialize(<span class="variable">$pop</span>);</span><br><span class="line">    var_dump(<span class="variable">$o</span>);</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;EvillClass.php&quot;</span>;</span><br><span class="line">    highlight_file(<span class="string">&quot;EvilClass.php&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>0x01:</strong></p>
+<p>先审计<code>index.php</code></p>
+<p>第一个点在于<code>spl_autoload_register</code>，当调用<code>index.php</code>中没有定义的类的时候就会自动调用<code>myAutoloader($classname)</code>，其中<code>$classname</code>就是我们想实例化的类</p>
+<p>想当然地我们想调用<code>EvilClass.php</code>里面的类，所以要<code>include EvilClass.php</code>，但是文件里还是没有定义<code>EvilClass</code>，这里就涉及到一个[php反序列的冷知识](<a href="https://zhuanlan.zhihu.com/p/405838002">PHP序列化冷知识 - 知乎 (zhihu.com)</a>)</p>
+<p>我们还发现之后的if判断语句中ban掉了<code>Evil</code>，这就说明在序列化之后的字符串中不能再出现<code>EvilClass</code>，不过可以直接拿里面的payload</p>
+<p>所以payload1：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a:1:&#123;i:0;O:22:&quot;__PHP_Incomplete_Class&quot;:1:&#123;s:3:&quot;qwb&quot;;O:9:&quot;EvilClass&quot;:0:&#123;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>……</p>
+<h2 id="fast-destruct"><a href="#fast-destruct" class="headerlink" title="fast __destruct"></a>fast __destruct</h2><p>在__wakeup前触发 __destruct</p>
+<blockquote>
+<p>1、如果单独执行<code>unserialize</code>函数进行常规的反序列化，那么被反序列化后的整个对象的生命周期就仅限于这个函数执行的生命周期，当这个函数执行完毕，这个类就没了，在有析构函数的情况下就会执行它。<br>2、如果反序列化函数序列化出来的对象被赋给了程序中的变量，那么被反序列化的对象其生命周期就会变长，由于它一直都存在于这个变量当中，当这个对象被销毁，才会执行其析构函数。</p>
+</blockquote>
+<p>而有时候我们如果提前执行<code>__destruct</code>(析构函数)就会绕过题目中某些限制,从而产生利用点,比如就可以bypass __wakeup(不过与php版本有关)</p>
+<p>提前触发的方法:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">修改属性个数值:</span><br><span class="line">O:1:&quot;A&quot;:2:&#123;s:4:&quot;test&quot;;s:2:&quot;ls&quot;;&#125;</span><br><span class="line">去掉序列化尾部:</span><br><span class="line">O:1:&quot;A&quot;:1:&#123;s:4:&quot;test&quot;;s:2:&quot;ls&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>例子:可以明显看到var_dump执行的顺序是不一样的</p>
+<p><img src="https://img-blog.csdnimg.cn/42e9ecc30f99495a84db2910200a26cf.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/0cf72b36e6914f3fb8b0aeaab0227223.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<h2 id="反序列化函数闭包"><a href="#反序列化函数闭包" class="headerlink" title="反序列化函数闭包"></a>反序列化函数闭包</h2><p>闭包函数也就是匿名函数,而在定义闭包函数的时候就会自动实例化<code>Closure</code>类</p>
+<p><img src="https://img-blog.csdnimg.cn/ce5c520a5605423e85df8d87c7e6ba64.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>但是直接用php自带的<code>serialize</code>函数对这个类进行序列化的时候会报错,但是我们可以通过工具去实现闭包函数的序列化</p>
+<p><strong>0x01:安装</strong></p>
+<p><a href="https://github.com/opis/closure">closure</a></p>
+<p><img src="https://img-blog.csdnimg.cn/d503d9e6d45e4162a781cab5c86a794f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p><strong>0x02:使用</strong></p>
+<p>之后直接测试吧，可以发现闭包函数直接用<code>unserialize</code>反序列化之后和<code>opis\closure\unserialize</code>反序列化的时候的返回值是不一样的但是都可以直接当作函数使用，这是为什么呢，我们可以跟一下代码：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span>(<span class="string">&#x27;vendor/autoload.php&#x27;</span>);</span><br><span class="line"><span class="variable">$a</span> = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;a&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="variable">$b</span> = opis\<span class="built_in">closure</span>\serialize(<span class="variable">$a</span>);</span><br><span class="line">var_dump(opis\<span class="built_in">closure</span>\serialize(<span class="variable">$a</span>));</span><br><span class="line">var_dump(unserialize(<span class="variable">$b</span>));</span><br><span class="line">unserialize(<span class="variable">$b</span>)();</span><br><span class="line">var_dump(opis\<span class="built_in">closure</span>\unserialize(<span class="variable">$b</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//string(198) &quot;C:32:&quot;Opis\Closure\SerializableClosure&quot;:152:&#123;a:5:&#123;s:3:&quot;use&quot;;a:0:&#123;&#125;s:8:&quot;function&quot;;s:29:&quot;function()&#123;</span></span><br><span class="line"><span class="comment">//    echo &quot;a&quot;;</span></span><br><span class="line"><span class="comment">//&#125;&quot;;s:5:&quot;scope&quot;;N;s:4:&quot;this&quot;;N;s:4:&quot;self&quot;;s:32:&quot;000000000bc714b9000000004a5c0eab&quot;;&#125;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//object(Opis\Closure\SerializableClosure)#2 (5) &#123;</span></span><br><span class="line"><span class="comment">//  [&quot;closure&quot;:protected]=&gt;</span></span><br><span class="line"><span class="comment">//  object(Closure)#5 (0) &#123;</span></span><br><span class="line"><span class="comment">//  &#125;</span></span><br><span class="line"><span class="comment">//  [&quot;reflector&quot;:protected]=&gt;</span></span><br><span class="line"><span class="comment">//  NULL</span></span><br><span class="line"><span class="comment">//  [&quot;code&quot;:protected]=&gt;</span></span><br><span class="line"><span class="comment">//  string(29) &quot;function()&#123;</span></span><br><span class="line"><span class="comment">//    echo &quot;a&quot;;</span></span><br><span class="line"><span class="comment">//&#125;&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;reference&quot;:protected]=&gt;</span></span><br><span class="line"><span class="comment">//  NULL</span></span><br><span class="line"><span class="comment">//  [&quot;scope&quot;:protected]=&gt;</span></span><br><span class="line"><span class="comment">//  NULL</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//a</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//object(Closure)#7 (0) &#123;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>–tbc</p>
+]]></content>
+      <categories>
+        <category>没有人比我更爱学习</category>
+      </categories>
+      <tags>
+        <tag>php</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>集训第二周学习</title>
     <url>/2022/01/22/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%BA%8C%E5%91%A8%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<h4 id="virink-2019-files-share"><a href="#virink-2019-files-share" class="headerlink" title="virink_2019_files_share"></a>virink_2019_files_share</h4><p>打开靶机，是一个魔方游戏，看源码有hint说flag在<code> f1ag_Is_h3re</code>，一开始去js文件里面看了一下，没有发现平时游戏题目中可以利用的点</p>
