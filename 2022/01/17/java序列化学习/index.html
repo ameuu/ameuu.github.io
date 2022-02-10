@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">65</span>
+            <span class="post-count">401</span>
         </span>
     </span>
 
@@ -113,10 +113,18 @@
     <div class="article-entry" itemprop="articleBody">
        
   <blockquote>
-<p> 因为上学期学了java课，但是发现别的班讲了序列化和正则之类的，但是我们老师没教，所以打算学一下</p>
+<p> 因为上学期学了java课，但是发现别的班讲了序列化和正则之类的，所以打算学一下</p>
 </blockquote>
-<h4 id="一、序列化概述"><a href="#一、序列化概述" class="headerlink" title="一、序列化概述"></a>一、序列化概述</h4><h4 id="二、java序列化"><a href="#二、java序列化" class="headerlink" title="二、java序列化"></a>二、java序列化</h4><h4 id="三、存在的漏洞"><a href="#三、存在的漏洞" class="headerlink" title="三、存在的漏洞"></a>三、存在的漏洞</h4><h4 id="四、java正则匹配"><a href="#四、java正则匹配" class="headerlink" title="四、java正则匹配"></a>四、java正则匹配</h4><span id="more"></span>
- 
+<h4 id="一、序列化概述"><a href="#一、序列化概述" class="headerlink" title="一、序列化概述"></a>一、序列化概述</h4><p>序列化是指把一个Java对象变成二进制内容，本质上就是一个byte[]数组。 序列化后可以把byte[]保存到文件中，或者把byte[]通过网络传输到远程，这样，就相当于把Java对象存储到文件或者通过网络传输出去了。 有序列化，就有反序列化，即把一个二进制内容（也就是byte[]数组）变回Java对象。有了反序列化，保存到文件中的byte[]数组又可以“变回”Java对象，或者从网络上读取byte[]并把它“变回”Java对象。<u>（来源网络）</u></p>
+<p>序列化最重要的作用：在传递和保存对象时.保证对象的完整性和可传递性。对象转换为有序字节流,以便在网络上传输或者保存在本地文件中。</p>
+<p>反序列化的最重要的作用：根据字节流中保存的对象状态及描述信息，通过反序列化重建对象。</p>
+<p>总结：核心作用就是对象状态的保存和重建。（整个过程核心点就是字节流中所保存的对象状态及描述信息）</p>
+<p>例如在php中如果要保存一个类，可以利用序列化将类保存成二进制内容：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">var_dump(serialize(<span class="keyword">new</span> A()));</span><br><span class="line"></span><br><span class="line"><span class="comment">//string(12) &quot;O:1:&quot;A&quot;:0:&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h4 id="二、java序列化"><a href="#二、java序列化" class="headerlink" title="二、java序列化"></a>二、java序列化</h4><h4 id="三、java正则匹配"><a href="#三、java正则匹配" class="headerlink" title="三、java正则匹配"></a>三、java正则匹配</h4> 
       <!-- reward -->
       
     </div>
