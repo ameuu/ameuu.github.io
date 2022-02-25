@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">401</span>
+            <span class="post-count">2.8k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -124,7 +124,204 @@
 
 <span id="more"></span>
 
-<h4 id="二、java序列化"><a href="#二、java序列化" class="headerlink" title="二、java序列化"></a>二、java序列化</h4><h4 id="三、java正则匹配"><a href="#三、java正则匹配" class="headerlink" title="三、java正则匹配"></a>三、java正则匹配</h4> 
+<h4 id="二、java序列化"><a href="#二、java序列化" class="headerlink" title="二、java序列化"></a>二、java序列化</h4><blockquote>
+<p>java.io.ObjectOutputStream代表对象输出流，它的writeObject(Object obj)方法可对参数指定的obj对象进行序列化，把得到的字节序列写到一个目标输出流中。<br>java.io.ObjectInputStream代表对象输入流，它的readObject()方法从一个源输入流中读取字节序列，再把它们反序列化为一个对象，并将其返回。<br>只有实现了Serializable和Externalizable接口的类的对象才能被序列化。Externalizable接口继承自 Serializable接口，实现Externalizable接口的类完全由自身来控制序列化的行为，而仅实现Serializable接口的类可以 采用默认的序列化方式 。<br>　　对象序列化包括如下步骤：<br>　　1） 创建一个对象输出流，它可以包装一个其他类型的目标输出流，如文件输出流；<br>　　2） 通过对象输出流的writeObject()方法写对象。</p>
+<p>　　对象反序列化的步骤如下：<br>　　1） 创建一个对象输入流，它可以包装一个其他类型的源输入流，如文件输入流；<br>　　2） 通过对象输入流的readObject()方法读取对象。</p>
+</blockquote>
+<p>所以可以用不同的方式实现对象的序列化</p>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/java/java-serialization.html">菜鸟教程</a></p>
+<p><strong>序列化：</strong></p>
+<p>//用于序列化的类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">char</span> sex;</span><br><span class="line">    Student(<span class="keyword">int</span> id,String name,<span class="keyword">char</span> sex)&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.sex = sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSex</span><span class="params">(<span class="keyword">char</span> sex)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sex = sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">char</span> <span class="title">getSex</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>//实现序列化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">serialize</span><span class="params">(Student std)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ObjectOutputStream obj = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;output.txt&quot;</span>));</span><br><span class="line">        obj.writeObject(std);</span><br><span class="line">        System.out.println(<span class="string">&quot;序列化成功！&quot;</span>);</span><br><span class="line">        obj.close();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// �� sr demo.Student��e�(�� I idC sexL namet Ljava/lang/String;xp   Yst Ameuu</span></span><br></pre></td></tr></table></figure>
+
+<p>//实现反序列化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unSerialize</span><span class="params">()</span> <span class="keyword">throws</span> IOException, ClassNotFoundException </span>&#123;</span><br><span class="line">        ObjectInputStream objectInputStream = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> File(<span class="string">&quot;output.txt&quot;</span>)));</span><br><span class="line">        Student student = (Student) objectInputStream.readObject();</span><br><span class="line">        System.out.println(student.getName());</span><br><span class="line">        System.out.println(<span class="string">&quot;反序列化成功&quot;</span>);</span><br><span class="line">        objectInputStream.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="三、java正则匹配"><a href="#三、java正则匹配" class="headerlink" title="三、java正则匹配"></a>三、java正则匹配</h4><p><a target="_blank" rel="noopener" href="https://www.runoob.com/java/java-regular-expressions.html">菜鸟教程</a></p>
+<table>
+<thead>
+<tr>
+<th align="left">字符</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">\</td>
+<td align="left">将下一字符标记为特殊字符、文本、反向引用或八进制转义符。例如， <strong>n</strong>匹配字符 <strong>n</strong>。<strong>\n</strong> 匹配换行符。序列 <strong>\\** 匹配 *<em>\*</em> ，</strong>\(** 匹配 **(**。</td>
+</tr>
+<tr>
+<td align="left">^</td>
+<td align="left">匹配输入字符串开始的位置。如果设置了 <strong>RegExp</strong> 对象的 <strong>Multiline</strong> 属性，^ 还会与”\n”或”\r”之后的位置匹配。</td>
+</tr>
+<tr>
+<td align="left">$</td>
+<td align="left">匹配输入字符串结尾的位置。如果设置了 <strong>RegExp</strong> 对象的 <strong>Multiline</strong> 属性，$ 还会与”\n”或”\r”之前的位置匹配。</td>
+</tr>
+<tr>
+<td align="left">*</td>
+<td align="left">零次或多次匹配前面的字符或子表达式。例如，zo* 匹配”z”和”zoo”。* 等效于 {0,}。</td>
+</tr>
+<tr>
+<td align="left">+</td>
+<td align="left">一次或多次匹配前面的字符或子表达式。例如，”zo+”与”zo”和”zoo”匹配，但与”z”不匹配。+ 等效于 {1,}。</td>
+</tr>
+<tr>
+<td align="left">?</td>
+<td align="left">零次或一次匹配前面的字符或子表达式。例如，”do(es)?”匹配”do”或”does”中的”do”。? 等效于 {0,1}。</td>
+</tr>
+<tr>
+<td align="left">{<em>n</em>}</td>
+<td align="left"><em>n</em> 是非负整数。正好匹配 <em>n</em> 次。例如，”o{2}”与”Bob”中的”o”不匹配，但与”food”中的两个”o”匹配。</td>
+</tr>
+<tr>
+<td align="left">{<em>n</em>,}</td>
+<td align="left"><em>n</em> 是非负整数。至少匹配 <em>n</em> 次。例如，”o{2,}”不匹配”Bob”中的”o”，而匹配”foooood”中的所有 o。”o{1,}”等效于”o+”。”o{0,}”等效于”o*”。</td>
+</tr>
+<tr>
+<td align="left">{<em>n</em>,<em>m</em>}</td>
+<td align="left"><em>m</em> 和 <em>n</em> 是非负整数，其中 <em>n</em> &lt;= <em>m</em>。匹配至少 <em>n</em> 次，至多 <em>m</em> 次。例如，”o{1,3}”匹配”fooooood”中的头三个 o。’o{0,1}’ 等效于 ‘o?’。注意：您不能将空格插入逗号和数字之间。</td>
+</tr>
+<tr>
+<td align="left">?</td>
+<td align="left">当此字符紧随任何其他限定符（*、+、?、{<em>n</em>}、{<em>n</em>,}、{<em>n</em>,<em>m</em>}）之后时，匹配模式是”非贪心的”。”非贪心的”模式匹配搜索到的、尽可能短的字符串，而默认的”贪心的”模式匹配搜索到的、尽可能长的字符串。例如，在字符串”oooo”中，”o+?”只匹配单个”o”，而”o+”匹配所有”o”。</td>
+</tr>
+<tr>
+<td align="left">.</td>
+<td align="left">匹配除”\r\n”之外的任何单个字符。若要匹配包括”\r\n”在内的任意字符，请使用诸如”[\s\S]”之类的模式。</td>
+</tr>
+<tr>
+<td align="left">(<em>pattern</em>)</td>
+<td align="left">匹配 <em>pattern</em> 并捕获该匹配的子表达式。可以使用 <strong>$0…$9</strong> 属性从结果”匹配”集合中检索捕获的匹配。若要匹配括号字符 ( )，请使用”(“或者”)“。</td>
+</tr>
+<tr>
+<td align="left">(?:<em>pattern</em>)</td>
+<td align="left">匹配 <em>pattern</em> 但不捕获该匹配的子表达式，即它是一个非捕获匹配，不存储供以后使用的匹配。这对于用”or”字符 (|) 组合模式部件的情况很有用。例如，’industr(?:y|ies) 是比 ‘industry|industries’ 更经济的表达式。</td>
+</tr>
+<tr>
+<td align="left">(?=<em>pattern</em>)</td>
+<td align="left">执行正向预测先行搜索的子表达式，该表达式匹配处于匹配 <em>pattern</em> 的字符串的起始点的字符串。它是一个非捕获匹配，即不能捕获供以后使用的匹配。例如，’Windows (?=95|98|NT|2000)’ 匹配”Windows 2000”中的”Windows”，但不匹配”Windows 3.1”中的”Windows”。预测先行不占用字符，即发生匹配后，下一匹配的搜索紧随上一匹配之后，而不是在组成预测先行的字符后。</td>
+</tr>
+<tr>
+<td align="left">(?!<em>pattern</em>)</td>
+<td align="left">执行反向预测先行搜索的子表达式，该表达式匹配不处于匹配 <em>pattern</em> 的字符串的起始点的搜索字符串。它是一个非捕获匹配，即不能捕获供以后使用的匹配。例如，’Windows (?!95|98|NT|2000)’ 匹配”Windows 3.1”中的 “Windows”，但不匹配”Windows 2000”中的”Windows”。预测先行不占用字符，即发生匹配后，下一匹配的搜索紧随上一匹配之后，而不是在组成预测先行的字符后。</td>
+</tr>
+<tr>
+<td align="left"><em>x</em>|<em>y</em></td>
+<td align="left">匹配 <em>x</em> 或 <em>y</em>。例如，’z|food’ 匹配”z”或”food”。’(z|f)ood’ 匹配”zood”或”food”。</td>
+</tr>
+<tr>
+<td align="left">[<em>xyz</em>]</td>
+<td align="left">字符集。匹配包含的任一字符。例如，”[abc]”匹配”plain”中的”a”。</td>
+</tr>
+<tr>
+<td align="left">[^<em>xyz</em>]</td>
+<td align="left">反向字符集。匹配未包含的任何字符。例如，”[^abc]”匹配”plain”中”p”，”l”，”i”，”n”。</td>
+</tr>
+<tr>
+<td align="left">[<em>a-z</em>]</td>
+<td align="left">字符范围。匹配指定范围内的任何字符。例如，”[a-z]”匹配”a”到”z”范围内的任何小写字母。</td>
+</tr>
+<tr>
+<td align="left">[^<em>a-z</em>]</td>
+<td align="left">反向范围字符。匹配不在指定的范围内的任何字符。例如，”[^a-z]”匹配任何不在”a”到”z”范围内的任何字符。</td>
+</tr>
+<tr>
+<td align="left">\b</td>
+<td align="left">匹配一个字边界，即字与空格间的位置。例如，”er\b”匹配”never”中的”er”，但不匹配”verb”中的”er”。</td>
+</tr>
+<tr>
+<td align="left">\B</td>
+<td align="left">非字边界匹配。”er\B”匹配”verb”中的”er”，但不匹配”never”中的”er”。</td>
+</tr>
+<tr>
+<td align="left">\c<em>x</em></td>
+<td align="left">匹配 <em>x</em> 指示的控制字符。例如，\cM 匹配 Control-M 或回车符。<em>x</em> 的值必须在 A-Z 或 a-z 之间。如果不是这样，则假定 c 就是”c”字符本身。</td>
+</tr>
+<tr>
+<td align="left">\d</td>
+<td align="left">数字字符匹配。等效于 [0-9]。</td>
+</tr>
+<tr>
+<td align="left">\D</td>
+<td align="left">非数字字符匹配。等效于 [^0-9]。</td>
+</tr>
+<tr>
+<td align="left">\f</td>
+<td align="left">换页符匹配。等效于 \x0c 和 \cL。</td>
+</tr>
+<tr>
+<td align="left">\n</td>
+<td align="left">换行符匹配。等效于 \x0a 和 \cJ。</td>
+</tr>
+<tr>
+<td align="left">\r</td>
+<td align="left">匹配一个回车符。等效于 \x0d 和 \cM。</td>
+</tr>
+<tr>
+<td align="left">\s</td>
+<td align="left">匹配任何空白字符，包括空格、制表符、换页符等。与 [ \f\n\r\t\v] 等效。</td>
+</tr>
+<tr>
+<td align="left">\S</td>
+<td align="left">匹配任何非空白字符。与 [^ \f\n\r\t\v] 等效。</td>
+</tr>
+<tr>
+<td align="left">\t</td>
+<td align="left">制表符匹配。与 \x09 和 \cI 等效。</td>
+</tr>
+<tr>
+<td align="left">\v</td>
+<td align="left">垂直制表符匹配。与 \x0b 和 \cK 等效。</td>
+</tr>
+<tr>
+<td align="left">\w</td>
+<td align="left">匹配任何字类字符，包括下划线。与”[A-Za-z0-9_]”等效。</td>
+</tr>
+<tr>
+<td align="left">\W</td>
+<td align="left">与任何非单词字符匹配。与”[^A-Za-z0-9_]”等效。</td>
+</tr>
+<tr>
+<td align="left">\x<em>n</em></td>
+<td align="left">匹配 <em>n</em>，此处的 <em>n</em> 是一个十六进制转义码。十六进制转义码必须正好是两位数长。例如，”\x41”匹配”A”。”\x041”与”\x04”&amp;”1”等效。允许在正则表达式中使用 ASCII 代码。</td>
+</tr>
+<tr>
+<td align="left">*num*</td>
+<td align="left">匹配 <em>num</em>，此处的 <em>num</em> 是一个正整数。到捕获匹配的反向引用。例如，”(.)\1”匹配两个连续的相同字符。</td>
+</tr>
+<tr>
+<td align="left">*n*</td>
+<td align="left">标识一个八进制转义码或反向引用。如果 *n* 前面至少有 <em>n</em> 个捕获子表达式，那么 <em>n</em> 是反向引用。否则，如果 <em>n</em> 是八进制数 (0-7)，那么 <em>n</em> 是八进制转义码。</td>
+</tr>
+<tr>
+<td align="left">*nm*</td>
+<td align="left">标识一个八进制转义码或反向引用。如果 *nm* 前面至少有 <em>nm</em> 个捕获子表达式，那么 <em>nm</em> 是反向引用。如果 *nm* 前面至少有 <em>n</em> 个捕获，则 <em>n</em> 是反向引用，后面跟有字符 <em>m</em>。如果两种前面的情况都不存在，则 *nm* 匹配八进制值 <em>nm</em>，其中 <em>n</em> 和 <em>m</em> 是八进制数字 (0-7)。</td>
+</tr>
+<tr>
+<td align="left">\nml</td>
+<td align="left">当 <em>n</em> 是八进制数 (0-3)，<em>m</em> 和 <em>l</em> 是八进制数 (0-7) 时，匹配八进制转义码 <em>nml</em>。</td>
+</tr>
+<tr>
+<td align="left">\u<em>n</em></td>
+<td align="left">匹配 <em>n</em>，其中 <em>n</em> 是以四位十六进制数表示的 Unicode 字符。例如，\u00A9 匹配版权符号 (©)。</td>
+</tr>
+</tbody></table>
+<h5 id="Pattern-Matcher"><a href="#Pattern-Matcher" class="headerlink" title="Pattern Matcher"></a>Pattern Matcher</h5><blockquote>
+<p>Pattern.matches()</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> demo2;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Replace</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Pattern.matches</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">boolean</span> res = Pattern.matches(<span class="string">&quot;a|m|e|u|u&quot;</span>,<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        System.out.println(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Pattern + Matcher</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Replace</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Pattern.compile (matcher) + Matcher</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        String data[] = &#123;<span class="string">&quot;[0-9]&#123;11&#125;&quot;</span>,<span class="string">&quot;[0-9]&#123;4&#125;\\.[0-9]&#123;1,2&#125;\\.[0-9]&#123;1,2&#125;&quot;</span>&#125;;</span><br><span class="line">       </span><br><span class="line">        Pattern r = Pattern.compile(data[<span class="number">1</span>]);</span><br><span class="line">        Matcher ans = r.matcher(<span class="string">&quot;2001.1.2&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(ans.find())&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;group:&quot;</span>+ans.group()); <span class="comment">// 2001.1.2</span></span><br><span class="line">            System.out.println(<span class="string">&quot;start:&quot;</span>+ans.start()); <span class="comment">// 0</span></span><br><span class="line">            System.out.println(<span class="string">&quot;end:&quot;</span>+ans.end()); <span class="comment">// 8</span></span><br><span class="line">            System.out.println(<span class="string">&quot;matches:&quot;</span>+ans.matches()); <span class="comment">// true</span></span><br><span class="line">            System.out.println(<span class="string">&quot;lookingAt:&quot;</span>+ans.lookingAt()); <span class="comment">// true</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="replace"><a href="#replace" class="headerlink" title="replace"></a>replace</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Replace</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Matcher</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        String input = <span class="string">&quot;dog&quot;</span>;</span><br><span class="line">        Pattern p = Pattern.compile(input);</span><br><span class="line">        Matcher m = p.matcher(<span class="string">&quot;catcatcatcatcatcatcatdogcatcatcatdog&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(m.find())&#123;</span><br><span class="line">            input = m.replaceAll(<span class="string">&quot;fish&quot;</span>);</span><br><span class="line">            System.out.println(input); <span class="comment">// catcatcatcatcatcatcatfishcatcatcatfish</span></span><br><span class="line">            input = m.replaceFirst(<span class="string">&quot;fish&quot;</span>); <span class="comment">// catcatcatcatcatcatcatfishcatcatcatdog</span></span><br><span class="line">            System.out.println(input);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
       <!-- reward -->
       
     </div>
