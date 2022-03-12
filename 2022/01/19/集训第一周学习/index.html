@@ -157,7 +157,6 @@
 <p><img src="https://img-blog.csdnimg.cn/10a5781779e7402c8d844b331f2e37c4.png" alt="img"></p>
 <p>base64解密之后得到flag</p>
 <h4 id="CISCN2019-Web4"><a href="#CISCN2019-Web4" class="headerlink" title="[CISCN2019]Web4"></a>[CISCN2019]Web4</h4><p>打开页面，点击之后发现直接转到了百度的界面，看url就可以发现着手点了</p>
-<p><img src="https://img-blog.csdnimg.cn/b1c62e623d6c469a8fc965deaa6ab527.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
 <p>可能存在ssrf之类的漏洞，直接试着查看<code>/flag</code>，但是返回了hacker，说明flag被ban了</p>
 <p>之后查看一些文件也看不出有什么可以利用的，那么就先抓个包吧</p>
 <p>发现session的值很想jwt的格式</p>
