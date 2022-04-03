@@ -276,92 +276,6 @@
       </tags>
   </entry>
   <entry>
-    <title>集训第二周学习</title>
-    <url>/2022/01/22/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%BA%8C%E5%91%A8%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<h4 id="virink-2019-files-share"><a href="#virink-2019-files-share" class="headerlink" title="virink_2019_files_share"></a>virink_2019_files_share</h4><p>打开靶机，是一个魔方游戏，看源码有hint说flag在<code> f1ag_Is_h3re</code>，一开始去js文件里面看了一下，没有发现平时游戏题目中可以利用的点</p>
-<p><img src="https://img-blog.csdnimg.cn/0aa9f312cdf643f58d774a23c746b609.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>发现有一个<code>uploads/favicon.ico </code>，直接访问<code>./uploads/</code>，存在两个文件都分别抓一下包，在preview里面发现get传的参，猜测会不会存在文件包含</p>
-<p>这里Server是<code>openresty</code>，百度之后发现是基于nginx，那么直接试着看nginx的配置文件啥的</p>
-<span id="more"></span>
-
-<p><img src="https://img-blog.csdnimg.cn/de73e1269d4744359168e12261db4aa8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>尝试之后发现有些字符被ban掉了，可以自己试着能不能通过重复等绕过，绕过过滤之后还要进行目录穿越</p>
-<p><img src="https://img-blog.csdnimg.cn/c9a2378f738b4ff8991084c09967d7fb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>那么，想要其他文件就直接在后面改吧，根据提示直接去<code>f1ag_Is_h3re</code>找flag</p>
-<p>payload1：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?f=....//....//....//....//....//....//f1ag_Is_h3rere</span><br></pre></td></tr></table></figure>
-
-<p>但是显示该文件不存在，看了别的师傅的wp</p>
-<p>在后面还要加上flag（为什么呢，虽然能理解f1ag_Is_h3re可能是个目录名，但是为什么能想到呢，可能还是一种思维吧</p>
-<p>最终payload：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">....//....//....//....//....//....//f1ag_Is_h3rere//flag</span><br></pre></td></tr></table></figure>
-
-<h4 id="PASECA2019-honey-shop"><a href="#PASECA2019-honey-shop" class="headerlink" title="[PASECA2019]honey_shop"></a>[PASECA2019]honey_shop</h4><ul>
-<li>经典买东西</li>
-<li>session伪造</li>
-<li>/proc/self</li>
-<li>/environ</li>
-</ul>
-<p>靶机主页面，经典要用钱买flag，刚好差一块钱，先都看看吧：</p>
-<p><img src="https://img-blog.csdnimg.cn/00bc169409ea4ac0a56d906a37dbd376.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>抓包，发现又是session伪造，所以我们可以修改balance为1337，这样就可以购买flag了，但是我们不知道密钥呀！！</p>
-<p>再次回到首页，康康源码，抓抓包</p>
-<p>最后点击图片可以下载，抓包康康；这种样子不禁让人觉得有文件包含漏洞，用<code>/etc/passwd</code>测试是否存在文件包含漏洞</p>
-<p><img src="https://img-blog.csdnimg.cn/fb66bfaf3f5b4dd1aa5ef8c6b73d22ce.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>目录穿越之后实现了文件包含</p>
-<p><img src="https://img-blog.csdnimg.cn/7bec789db81d4ddcb8cc4b7565765c00.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>看师傅的<a href="https://blog.csdn.net/weixin_44037296/article/details/111469361">wp</a>，学到的新知识：</p>
-<p>（因为这里用到了flask session伪造，所以应该是python的环境</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/proc/self 指向当前的进程</span><br><span class="line">/environ 当前进程的变量环境信息</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/eceb6ce2b2474078bcac2ad4581fab88.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>得到密钥那就直接伪造，修改session，购买flag吧</p>
-<p><img src="https://img-blog.csdnimg.cn/d494bbde6fab49a2827d5f31b4a235d7.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<h4 id="watevrCTF-2019-Supercalc"><a href="#watevrCTF-2019-Supercalc" class="headerlink" title="[watevrCTF-2019]Supercalc"></a>[watevrCTF-2019]Supercalc</h4><ul>
-<li>flask session伪造</li>
-<li><code>&#123;&#123;config&#125;&#125;</code></li>
-</ul>
-<p>打开靶机，是一个计算器</p>
-<p><img src="https://img-blog.csdnimg.cn/7fe2d938ac4740dbbf6b73dffa42b5ea.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>测试几次之后，抓包发现session，kali中解密之后可以确定是flask session，我们可以进行伪造，既然已经知道是flask框架，然后执行的代码又是<code>&#123;&#39;1+1&#39;&#125;</code>这样的，那么可以猜测是ssti注入</p>
-<p>但是同样的，重点还是找到密钥</p>
-<p>这里利用<code>&#123;&#123;config&#125;&#125;</code>，不过这里必须要是再前面的运算报错的情况下才能实现，这或许和后端的check有关（？可以去看一下源码</p>
-<p>利用注释绕过判断，但是在执行过程中又会执行，得到密钥</p>
-<p><img src="https://img-blog.csdnimg.cn/fa93f28b618e4da69963ee06220ff5cb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>之后直接打payload：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;history&quot;:[&#123;&quot;code&quot;:&quot;__import__(\&quot;os\&quot;).popen(\&quot;ls\&quot;).read()&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现有flag.txt</p>
-<p><img src="https://img-blog.csdnimg.cn/dd7c034961e74355863ed4d98a377507.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
-<p>直接cat就好啦</p>
-<p>payload2：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;history&quot;:[&#123;&quot;code&quot;:&quot;__import__(\&quot;os\&quot;).popen(\&quot;cat flag.txt\&quot;).read()&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="b01lers2020-Scrambled"><a href="#b01lers2020-Scrambled" class="headerlink" title="[b01lers2020]Scrambled"></a>[b01lers2020]Scrambled</h4><ul>
-<li>python脚本编写</li>
-</ul>
-<p>简单来说，transmissions两边的<code>kxkxkxkxsh</code>都不会改变，而中间的<code>0b29</code>指的是第29位是b，第28位是0，直接写脚本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://efbfb7c1-8fd8-4ed9-9a4d-0e065c79e0e3.node4.buuoj.cn:81/&#x27;</span></span><br><span class="line">res = requests.session()</span><br><span class="line">r = res.get(url, headers=&#123;<span class="string">&#x27;Cookie&#x27;</span>: <span class="string">&#x27;frequency=1; transmissions=kxkxkxkxsh0b29kxkxkxkxsh&#x27;</span>&#125;)</span><br><span class="line">flag = [<span class="number">0</span>]*<span class="number">100</span></span><br><span class="line">fflag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>): <span class="comment"># 这里最好是要100此，难免会出现重复的transmissions导致最后的结果错误</span></span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    r = res.get(url)</span><br><span class="line">    cookies = r.cookies</span><br><span class="line">    ans = <span class="built_in">str</span>(cookies[<span class="string">&#x27;transmissions&#x27;</span>])</span><br><span class="line">    ans = ans.replace(<span class="string">&#x27;kxkxkxkxsh&#x27;</span>, <span class="string">&#x27;&#x27;</span>).replace(<span class="string">&#x27;%7B&#x27;</span>, <span class="string">&#x27;&#123;&#x27;</span>).replace(<span class="string">&#x27;%7D&#x27;</span>, <span class="string">&#x27;&#125;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(ans)</span><br><span class="line">    index = ans[<span class="number">2</span>:]</span><br><span class="line">    flag[<span class="built_in">int</span>(index)] = ans[<span class="number">1</span>]</span><br><span class="line">    flag[<span class="built_in">int</span>(index)-<span class="number">1</span>] = ans[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-------loading-------&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    fflag += <span class="built_in">str</span>(flag[i])</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(fflag)</span><br></pre></td></tr></table></figure>
-
-<h4 id="最后："><a href="#最后：" class="headerlink" title="最后："></a>最后：</h4><p>学到的新知识点：</p>
-<p><strong>0x01:</strong></p>
-<p><code>/proc/self</code> 指向当前进程</p>
-<p><code>/environ</code> 指向进程的环境变量信息</p>
-<p>做了好多flask session伪造</p>
-<p><strong>0x02:</strong></p>
-<p>利用<code>&#123;&#123;config&#125;&#125;</code>获取环境变量</p>
-<p>flask框架ssti注入</p>
-<p><strong>———————–TBC—————————</strong></p>
-]]></content>
-      <categories>
-        <category>集训</category>
-      </categories>
-      <tags>
-        <tag>web</tag>
-        <tag>buu刷题</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>集训第三周学习</title>
     <url>/2022/02/12/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%B8%89%E5%91%A8%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<h4 id="HITCON-2016-Leaking"><a href="#HITCON-2016-Leaking" class="headerlink" title="[HITCON 2016]Leaking"></a>[HITCON 2016]Leaking</h4><ul>
@@ -457,6 +371,92 @@
       </tags>
   </entry>
   <entry>
+    <title>集训第二周学习</title>
+    <url>/2022/01/22/%E9%9B%86%E8%AE%AD%E7%AC%AC%E4%BA%8C%E5%91%A8%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<h4 id="virink-2019-files-share"><a href="#virink-2019-files-share" class="headerlink" title="virink_2019_files_share"></a>virink_2019_files_share</h4><p>打开靶机，是一个魔方游戏，看源码有hint说flag在<code> f1ag_Is_h3re</code>，一开始去js文件里面看了一下，没有发现平时游戏题目中可以利用的点</p>
+<p><img src="https://img-blog.csdnimg.cn/0aa9f312cdf643f58d774a23c746b609.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>发现有一个<code>uploads/favicon.ico </code>，直接访问<code>./uploads/</code>，存在两个文件都分别抓一下包，在preview里面发现get传的参，猜测会不会存在文件包含</p>
+<p>这里Server是<code>openresty</code>，百度之后发现是基于nginx，那么直接试着看nginx的配置文件啥的</p>
+<span id="more"></span>
+
+<p><img src="https://img-blog.csdnimg.cn/de73e1269d4744359168e12261db4aa8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>尝试之后发现有些字符被ban掉了，可以自己试着能不能通过重复等绕过，绕过过滤之后还要进行目录穿越</p>
+<p><img src="https://img-blog.csdnimg.cn/c9a2378f738b4ff8991084c09967d7fb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>那么，想要其他文件就直接在后面改吧，根据提示直接去<code>f1ag_Is_h3re</code>找flag</p>
+<p>payload1：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?f=....//....//....//....//....//....//f1ag_Is_h3rere</span><br></pre></td></tr></table></figure>
+
+<p>但是显示该文件不存在，看了别的师傅的wp</p>
+<p>在后面还要加上flag（为什么呢，虽然能理解f1ag_Is_h3re可能是个目录名，但是为什么能想到呢，可能还是一种思维吧</p>
+<p>最终payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">....//....//....//....//....//....//f1ag_Is_h3rere//flag</span><br></pre></td></tr></table></figure>
+
+<h4 id="PASECA2019-honey-shop"><a href="#PASECA2019-honey-shop" class="headerlink" title="[PASECA2019]honey_shop"></a>[PASECA2019]honey_shop</h4><ul>
+<li>经典买东西</li>
+<li>session伪造</li>
+<li>/proc/self</li>
+<li>/environ</li>
+</ul>
+<p>靶机主页面，经典要用钱买flag，刚好差一块钱，先都看看吧：</p>
+<p><img src="https://img-blog.csdnimg.cn/00bc169409ea4ac0a56d906a37dbd376.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>抓包，发现又是session伪造，所以我们可以修改balance为1337，这样就可以购买flag了，但是我们不知道密钥呀！！</p>
+<p>再次回到首页，康康源码，抓抓包</p>
+<p>最后点击图片可以下载，抓包康康；这种样子不禁让人觉得有文件包含漏洞，用<code>/etc/passwd</code>测试是否存在文件包含漏洞</p>
+<p><img src="https://img-blog.csdnimg.cn/fb66bfaf3f5b4dd1aa5ef8c6b73d22ce.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>目录穿越之后实现了文件包含</p>
+<p><img src="https://img-blog.csdnimg.cn/7bec789db81d4ddcb8cc4b7565765c00.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>看师傅的<a href="https://blog.csdn.net/weixin_44037296/article/details/111469361">wp</a>，学到的新知识：</p>
+<p>（因为这里用到了flask session伪造，所以应该是python的环境</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/proc/self 指向当前的进程</span><br><span class="line">/environ 当前进程的变量环境信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/eceb6ce2b2474078bcac2ad4581fab88.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>得到密钥那就直接伪造，修改session，购买flag吧</p>
+<p><img src="https://img-blog.csdnimg.cn/d494bbde6fab49a2827d5f31b4a235d7.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<h4 id="watevrCTF-2019-Supercalc"><a href="#watevrCTF-2019-Supercalc" class="headerlink" title="[watevrCTF-2019]Supercalc"></a>[watevrCTF-2019]Supercalc</h4><ul>
+<li>flask session伪造</li>
+<li><code>&#123;&#123;config&#125;&#125;</code></li>
+</ul>
+<p>打开靶机，是一个计算器</p>
+<p><img src="https://img-blog.csdnimg.cn/7fe2d938ac4740dbbf6b73dffa42b5ea.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>测试几次之后，抓包发现session，kali中解密之后可以确定是flask session，我们可以进行伪造，既然已经知道是flask框架，然后执行的代码又是<code>&#123;&#39;1+1&#39;&#125;</code>这样的，那么可以猜测是ssti注入</p>
+<p>但是同样的，重点还是找到密钥</p>
+<p>这里利用<code>&#123;&#123;config&#125;&#125;</code>，不过这里必须要是再前面的运算报错的情况下才能实现，这或许和后端的check有关（？可以去看一下源码</p>
+<p>利用注释绕过判断，但是在执行过程中又会执行，得到密钥</p>
+<p><img src="https://img-blog.csdnimg.cn/fa93f28b618e4da69963ee06220ff5cb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>之后直接打payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;history&quot;:[&#123;&quot;code&quot;:&quot;__import__(\&quot;os\&quot;).popen(\&quot;ls\&quot;).read()&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现有flag.txt</p>
+<p><img src="https://img-blog.csdnimg.cn/dd7c034961e74355863ed4d98a377507.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYW1ldXU=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>直接cat就好啦</p>
+<p>payload2：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;history&quot;:[&#123;&quot;code&quot;:&quot;__import__(\&quot;os\&quot;).popen(\&quot;cat flag.txt\&quot;).read()&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;,&#123;&quot;code&quot;:&quot;1 + 1&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="b01lers2020-Scrambled"><a href="#b01lers2020-Scrambled" class="headerlink" title="[b01lers2020]Scrambled"></a>[b01lers2020]Scrambled</h4><ul>
+<li>python脚本编写</li>
+</ul>
+<p>简单来说，transmissions两边的<code>kxkxkxkxsh</code>都不会改变，而中间的<code>0b29</code>指的是第29位是b，第28位是0，直接写脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://efbfb7c1-8fd8-4ed9-9a4d-0e065c79e0e3.node4.buuoj.cn:81/&#x27;</span></span><br><span class="line">res = requests.session()</span><br><span class="line">r = res.get(url, headers=&#123;<span class="string">&#x27;Cookie&#x27;</span>: <span class="string">&#x27;frequency=1; transmissions=kxkxkxkxsh0b29kxkxkxkxsh&#x27;</span>&#125;)</span><br><span class="line">flag = [<span class="number">0</span>]*<span class="number">100</span></span><br><span class="line">fflag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>): <span class="comment"># 这里最好是要100此，难免会出现重复的transmissions导致最后的结果错误</span></span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    r = res.get(url)</span><br><span class="line">    cookies = r.cookies</span><br><span class="line">    ans = <span class="built_in">str</span>(cookies[<span class="string">&#x27;transmissions&#x27;</span>])</span><br><span class="line">    ans = ans.replace(<span class="string">&#x27;kxkxkxkxsh&#x27;</span>, <span class="string">&#x27;&#x27;</span>).replace(<span class="string">&#x27;%7B&#x27;</span>, <span class="string">&#x27;&#123;&#x27;</span>).replace(<span class="string">&#x27;%7D&#x27;</span>, <span class="string">&#x27;&#125;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(ans)</span><br><span class="line">    index = ans[<span class="number">2</span>:]</span><br><span class="line">    flag[<span class="built_in">int</span>(index)] = ans[<span class="number">1</span>]</span><br><span class="line">    flag[<span class="built_in">int</span>(index)-<span class="number">1</span>] = ans[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-------loading-------&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    fflag += <span class="built_in">str</span>(flag[i])</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(fflag)</span><br></pre></td></tr></table></figure>
+
+<h4 id="最后："><a href="#最后：" class="headerlink" title="最后："></a>最后：</h4><p>学到的新知识点：</p>
+<p><strong>0x01:</strong></p>
+<p><code>/proc/self</code> 指向当前进程</p>
+<p><code>/environ</code> 指向进程的环境变量信息</p>
+<p>做了好多flask session伪造</p>
+<p><strong>0x02:</strong></p>
+<p>利用<code>&#123;&#123;config&#125;&#125;</code>获取环境变量</p>
+<p>flask框架ssti注入</p>
+<p><strong>———————–TBC—————————</strong></p>
+]]></content>
+      <categories>
+        <category>集训</category>
+      </categories>
+      <tags>
+        <tag>web</tag>
+        <tag>buu刷题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>集训第四周学习</title>
     <url>/2022/02/16/%E9%9B%86%E8%AE%AD%E7%AC%AC%E5%9B%9B%E5%91%A8%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<h4 id="HarekazeCTF2019-Easy-Notes"><a href="#HarekazeCTF2019-Easy-Notes" class="headerlink" title="[HarekazeCTF2019]Easy Notes"></a>[HarekazeCTF2019]Easy Notes</h4><ul>
@@ -482,6 +482,8 @@
 <p>CC6、CC3、RMI简单入门 （之后先去学一下fastjson反序列化</p>
 </blockquote>
 <h3 id="CC6"><a href="#CC6" class="headerlink" title="CC6"></a>CC6</h3><p>为了解决CC1在高版本jdk中不适用的局限，我们来审计一下没有版本限制的CC6</p>
+<span id="more"></span>
+
 <p>这次就先不跟着P神了！</p>
 <p>ysoserial的Gadget chain</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Gadget chain:</span><br><span class="line">	    java.io.ObjectInputStream.readObject()</span><br><span class="line">            java.util.HashSet.readObject()</span><br><span class="line">                java.util.HashMap.put()</span><br><span class="line">                java.util.HashMap.hash()</span><br><span class="line">                    org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()</span><br><span class="line">                    org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()</span><br><span class="line">                        org.apache.commons.collections.map.LazyMap.get()</span><br><span class="line">                        ···</span><br></pre></td></tr></table></figure>

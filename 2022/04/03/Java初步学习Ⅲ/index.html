@@ -116,6 +116,8 @@
 <p>CC6、CC3、RMI简单入门 （之后先去学一下fastjson反序列化</p>
 </blockquote>
 <h3 id="CC6"><a href="#CC6" class="headerlink" title="CC6"></a>CC6</h3><p>为了解决CC1在高版本jdk中不适用的局限，我们来审计一下没有版本限制的CC6</p>
+<span id="more"></span>
+
 <p>这次就先不跟着P神了！</p>
 <p>ysoserial的Gadget chain</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Gadget chain:</span><br><span class="line">	    java.io.ObjectInputStream.readObject()</span><br><span class="line">            java.util.HashSet.readObject()</span><br><span class="line">                java.util.HashMap.put()</span><br><span class="line">                java.util.HashMap.hash()</span><br><span class="line">                    org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()</span><br><span class="line">                    org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()</span><br><span class="line">                        org.apache.commons.collections.map.LazyMap.get()</span><br><span class="line">                        ···</span><br></pre></td></tr></table></figure>
