@@ -160,7 +160,7 @@
 <blockquote>
 <ol>
 <li>先触发Model类的__destruct方法，使得$this-&gt;lazySave为true进入save函数</li>
-<li>要求$this-&gt;withEvent为false，$this-&gt;data不为空，$this-&gt;exits为true，进入updateData函数</li>
+<li>要求<code>$this-&gt;withEvent为false</code>，$this-&gt;data不为空，$this-&gt;exits为true，进入updateData函数</li>
 <li>直接进入Attribute类的getChangedData函数，会因为之后要去check，所以不能在下一个if语句里return掉，所以返回的$data不能为空，所以要求Attribute里面的$this-&gt;force为true，$this-&gt;data要有值，进入Model，checkAllowFields函数</li>
 <li>进入if，要求$this-&gt;field和$this-&gt;schema都为空，在这里$this-&gt;table . $this-&gt;suffix触发Conversion类的toString方法，所以要求$this-&gt;table为true，$this-&gt;suffix实例化Conversion</li>
 <li>进入Conversion类，进入toArray函数，进入Attribute类的getAttr函数，传键值，进入getData函数，传入的值不能为空，进入getRealFieldName函数，要求$this-&gt;strict为true，使得直接返回$name，然后要在键值要存在于$this-&gt;data中，使得直接返回$this-&gt;data[$name]，最后以$name=$key $value=$this-&gt;data[$name] $relation=false进入getValue函数</li>
